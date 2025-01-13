@@ -5,14 +5,22 @@ const char* ssid = "Casa Bello";
 const char* password = "N66k8nbe";
 */
 //Wifi Trabajo
-const char* ssid = "Grupo EPM";
-const char* password = "Soporte632";
+//const char* ssid = "Grupo EPM";
+//const char* password = "Soporte632";
+//Wifi Telefono
+const char* ssid = "S21 de Joaquin";
+const char* password = "pdxm5512";
 
 // IP de Casa
 //const char* serverIp = "192.168.100.13"; // Cambia por la IP del servidor
 // IP de Trabajo
-const char* serverIp = "201.236.162.98";
+//const char* serverIp = "201.236.162.98";
+
+// Ip del telefono
+const char* serverIp = "186.11.80.196";
 const int serverPort = 3000;
+
+
 
 WebSocketsClient webSocket;
 
