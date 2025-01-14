@@ -83,7 +83,7 @@
       <div class="container-fluid bg-dark">
         <div class="row">
           <div class="col-12">
-            <h1 class="text-center text-light">Controla tu Auto</h1>
+            <h1 class="text-center text-light">Controla tu MK-BOT</h1>
           </div>
         </div>
       </div>
@@ -129,6 +129,7 @@
 
       function sendCommand(command) {
         if (socket.readyState === WebSocket.OPEN) {
+          console.log(`Enviando comando: ${command}`);
           socket.send(command);
         } else {
           console.error("WebSocket no está conectado");
