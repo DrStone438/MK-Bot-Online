@@ -19,6 +19,7 @@ const wss = new WebSocket.Server({ server });
 
 wss.on('connection', (ws) => {
     console.log('Cliente conectado');
+    ws.send('prueba directa'); // Envía un mensaje de prueba
 
     // Escuchar mensajes del cliente
     ws.on('message', (message) => {
