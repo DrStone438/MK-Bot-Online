@@ -23,12 +23,12 @@ wss.on('connection', (ws) => {
 
     // Escuchar mensajes del cliente
     ws.on('message', (message) => {
-        console.log(`Mensaje recibido: ${message}`);
+        console.log(`Comando recibido: ${message}`);
         
         // Reenviar el mensaje a todos los clientes conectados
         wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
-                console.log(`Reenviando mensaje: ${message}`);
+                console.log(`Reenviando Comando: ${message}`);
                 client.send(message);
             }
         });
