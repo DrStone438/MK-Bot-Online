@@ -29,7 +29,23 @@ wss.on('connection', (ws) => {
         wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
                 console.log(`Reenviando Comando: ${message}`);
-                client.send(message);
+                //client.send(message);
+
+                if (message == 'adelante'){
+                    client.send('adelante');
+                }
+                else if (message == 'atras'){
+                    client.send('atras');
+                }
+                else if (message == 'derecha'){
+                    client.send('derecha');
+                }
+                else if (message == 'izquierda'){
+                    client.send('izquierda');
+                }
+                else if (message == 'stop'){
+                    client.send('stop');
+                }
             }
         });
     });

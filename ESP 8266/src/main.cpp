@@ -27,6 +27,7 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
         break;
     case WStype_CONNECTED:
         Serial.println("Conectado al servidor WebSocket");
+        delay(500);// deja un ligero retraso para que el servidor pueda responder
         webSocket.sendTXT("ESP conectado");
         break;
     case WStype_TEXT:
@@ -39,8 +40,10 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
         if (command.equals("adelante"))
         {
             // Lógica para mover adelante
+            Serial.println("Comando: adelante detectado");
             digitalWrite(D1, HIGH);
             Serial.println("adelante");
+            webSocket.sendTXT("Comando ejecutado: adelante");// manda un mensaje al servidor de que se ejecuto el comando
         }
         else if (command.equals("atras"))
         {
@@ -63,6 +66,14 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
             digitalWrite(D1, LOW);
             Serial.println("stop");
         }
+        else
+        {
+            Serial.println("Comando no reconocido: " + command);
+            digitalWrite(LED_BUILTIN, LOW);
+            delay(1000);
+            digitalWrite(LED_BUILTIN, HIGH);
+            delay(10);
+        }
         break;
     }
 }
@@ -70,6 +81,7 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
 void setup()
 {
     Serial.begin(115200);
+    pinMode(LED_BUILTIN, OUTPUT);
 
     // Conexión WiFi
     WiFi.begin(ssid, password);
