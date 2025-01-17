@@ -18,6 +18,8 @@ const char *serverIp = "192.168.100.13"; // Cambia por la IP del servidor
 const int serverPort = 3000;
 WebSocketsClient webSocket;
 
+
+
 void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
 {
     switch (type)
@@ -49,30 +51,32 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
         {
             // Lógica para mover atrás
             Serial.println("atras");
+            digitalWrite(D2,HIGH);
         }
         else if (command.equals("izquierda"))
         {
             // Lógica para girar izquierda
             Serial.println("izquierda");
+            digitalWrite(D3,HIGH);
         }
         else if (command.equals("derecha"))
         {
             // Lógica para girar derecha
             Serial.println("derecha");
+            digitalWrite(D4,HIGH);
         }
         else if (command.equals("stop"))
         {
             // Lógica para detener
             digitalWrite(D1, LOW);
+            digitalWrite(D2, LOW);
+            digitalWrite(D3, LOW);
+            digitalWrite(D4, LOW);
             Serial.println("stop");
         }
         else
         {
             Serial.println("Comando no reconocido: " + command);
-            digitalWrite(LED_BUILTIN, LOW);
-            delay(1000);
-            digitalWrite(LED_BUILTIN, HIGH);
-            delay(10);
         }
         break;
     }
@@ -82,6 +86,9 @@ void setup()
 {
     Serial.begin(115200);
     pinMode(LED_BUILTIN, OUTPUT);
+    pinMode(D2, OUTPUT);
+    pinMode(D3, OUTPUT);
+    pinMode(D4, OUTPUT);
 
     // Conexión WiFi
     WiFi.begin(ssid, password);
