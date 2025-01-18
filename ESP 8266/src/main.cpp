@@ -11,7 +11,7 @@ const char *password = "N66k8nbe";
  //const char* password = "Soporte632";
 
 // IP de Casa
-const char *serverIp = "192.168.100.13"; // Cambia por la IP del servidor
+const char *serverIp = "192.168.100.66"; // Cambia por la IP del servidor
 // IP de Trabajo
  //const char* serverIp = "201.236.162.98";
 
