@@ -9,9 +9,24 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.static('public')); // Carpeta para la página web
 
-// Servidor HTTP para servir la página web
+const os = require('os'); // Importar módulo para obtener la IP
+
+// Obtener la dirección IP local del servidor
+const getLocalIP = () => {
+    const interfaces = os.networkInterfaces();
+    for (const name in interfaces) {
+        for (const iface of interfaces[name]) {
+            if (iface.family === 'IPv4' && !iface.internal) {
+                return iface.address;
+            }
+        }
+    }
+    return 'localhost';
+};
+
+const localIP = getLocalIP();
 const server = app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`Servidor corriendo en http://${localIP}:${PORT}`);
 });
 
 // Servidor WebSocket
