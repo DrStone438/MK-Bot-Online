@@ -107,10 +107,11 @@
     
 
     <script>
-      const socket = new WebSocket("ws://10.204.82.11:3000"); // Ajusta la IP si es un servidor externo
+      const socket = new WebSocket("ws://192.168.100.13:3000"); // Ajusta la IP si es un servidor externo
 
       socket.onopen = () => {
         console.log("Conectado al servidor WebSocket");
+        socket.send("register:web:robot1");//Aqui se registra el cliente se puede cambiar el robot1 por una variable
       };
 
       socket.onmessage = (event) => {
@@ -130,7 +131,7 @@
       function sendCommand(command) {
         if (socket.readyState === WebSocket.OPEN) {
           console.log(`Enviando comando: ${command}`);
-          socket.send(command);
+          socket.send(`command:${command}`);
         } else {
           console.error("WebSocket no está conectado");
         }
