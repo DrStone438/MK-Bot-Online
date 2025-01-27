@@ -3,8 +3,6 @@
 #include <arduino.h>
 
 // Configuración WiFi
-//const char* ssid = "ZTE-2.4G";
-//const char* password = "math9793";
 const char* ssid = "Casa Bello";
 const char* password = "N66k8nbe";
 
@@ -34,8 +32,8 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
         break;
     case WStype_CONNECTED: {
         Serial.println("Conectado al servidor WebSocket");
-        // Registrarse con el servidor
-        String registerMessage = String("clase=robot ID=") + robotID;
+        // Registrarse con el servidor en formato JSON
+        String registerMessage = String("{\"clase\":\"robot\",\"ID\":\"") + robotID + "\"}";
         webSocket.sendTXT(registerMessage);
         break;
     }
@@ -44,8 +42,8 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
         String message = String((char*)payload);
         Serial.println("Mensaje: " + message);
 
-        // Analizar mensaje simple
-        if (message.startsWith("ID=") && message.indexOf(robotID) != -1) {
+        // Analizar mensaje JSON (parsing simple)
+        if (message.indexOf(String("\"ID\":\"") + robotID + "\"") != -1) {
             if (message.indexOf("adelante") != -1) {
                 Serial.println("Mover adelante");
                 analogWrite(ENA, 100);

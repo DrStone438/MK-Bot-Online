@@ -30,6 +30,17 @@
   </head>
 
   <body class="bg-success">
+    <div class="container mt-4">
+      <div class="mb-3">
+        <label for="robotSelector" class="form-label text-white">Selecciona el robot a controlar:</label>
+        <select class="form-select" id="robotSelector" onchange="changeRobot()">
+          <option value="robot1" selected>Robot 1</option>
+          <option value="robot2">Robot 2</option>
+          <option value="robot3">Robot 3</option>
+        </select>
+      </div>
+    </div>
+
     <div class="d-pad mt-5">
       <div class="empty"></div>
 
@@ -104,14 +115,13 @@
       </nav>
     </div>
 
-    
-
     <script>
       const socket = new WebSocket("wss://mk-bot-online.onrender.com"); // Ajusta la IP si es un servidor externo
+      let currentRobot = "robot1"; // Robot seleccionado por defecto
 
       socket.onopen = () => {
         console.log("Conectado al servidor WebSocket");
-        socket.send("register:web:robot1");//Aqui se registra el cliente se puede cambiar el robot1 por una variable
+        registerRobot();
       };
 
       socket.onmessage = (event) => {
@@ -128,13 +138,29 @@
         }
       };
 
-      function sendCommand(command) {
+      function registerRobot() {
         if (socket.readyState === WebSocket.OPEN) {
-          console.log(`Enviando comando: ${command}`);
-          socket.send(`command:${command}`);
+          console.log(`Registrando cliente para: ${currentRobot}`);
+          socket.send(`register:web:${currentRobot}`);
         } else {
           console.error("WebSocket no está conectado");
         }
+      }
+
+      function sendCommand(command) {
+        if (socket.readyState === WebSocket.OPEN) {
+          console.log(`Enviando comando a ${currentRobot}: ${command}`);
+          socket.send(`command:${currentRobot}:${command}`);
+        } else {
+          console.error("WebSocket no está conectado");
+        }
+      }
+
+      function changeRobot() {
+        const selector = document.getElementById("robotSelector");
+        currentRobot = selector.value;
+        console.log(`Robot cambiado a: ${currentRobot}`);
+        registerRobot();
       }
     </script>
   </body>
