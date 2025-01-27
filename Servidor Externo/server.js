@@ -3,13 +3,13 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 3000;//ingrese el puerto que quiere usar
+const PORT = process.env.PORT || 3000;//Ingrese el puerto de el servidor
 
 // Configurar Express
 app.use(cors());
 app.use(express.static('public')); // Carpeta para la página web
 
-const os = require('os');
+const os = require('os'); // Importar módulo para obtener la IP
 
 // Obtener la dirección IP local del servidor
 const getLocalIP = () => {
@@ -32,67 +32,64 @@ const server = app.listen(PORT, () => {
 // Servidor WebSocket
 const wss = new WebSocket.Server({ server });
 
-// Mapa para asociar robots y conexiones
-const robotSessions = new Map();
+// Mapeo de ID a conexiones
+const sessions = {};
 
 wss.on('connection', (ws) => {
     console.log('Cliente conectado');
 
-    let clientType = null; // Tipo del cliente: "robot" o "web"
-    let robotId = null; // Identificador del robot asociado
-
     // Escuchar mensajes del cliente
     ws.on('message', (message) => {
         console.log(`Mensaje recibido: ${message}`);
-        const parts = message.split(':');
+        
+        try {
+            const data = JSON.parse(message);
 
-        if (parts[0] === 'register') {
-            // Registro de clientes
-            clientType = parts[1]; // "robot" o "web"
-            robotId = parts[2];
-
-            if (clientType === 'robot') {
-                // Registrar un robot
-                robotSessions.set(robotId, { robot: ws, web: null });
-                console.log(`Robot ${robotId} registrado`);
-                ws.send(`registered:${robotId}`);
-            } else if (clientType === 'web') {
-                // Vincular página web al robot
-                if (robotSessions.has(robotId)) {
-                    robotSessions.get(robotId).web = ws;
-                    console.log(`Página web vinculada a robot ${robotId}`);
-                    ws.send(`linked:${robotId}`);
+            if (data.clase === 'robot' && data.ID) {
+                // Registrar el ESP con su ID
+                sessions[data.ID] = ws;
+                console.log(`Robot registrado: ${data.ID}`);
+                ws.send(JSON.stringify({ status: 'registrado', ID: data.ID }));
+            } else if (data.clase === 'web' && data.ID) {
+                // Conexión desde una página web
+                const robotWs = sessions[data.ID];
+                if (robotWs && robotWs.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({ status: 'conectado', ID: data.ID }));
+                    
+                    // Redirigir comandos del cliente web al ESP
+                    ws.on('message', (command) => {
+                        console.log(`Comando para ${data.ID}: ${command}`);
+                        robotWs.send(command);
+                    });
                 } else {
-                    ws.send(`error:Robot ${robotId} no encontrado`);
-                }
-            }
-        } else if (parts[0] === 'command' && clientType === 'web') {
-            // Comando desde la página web
-            const command = parts[1];
-            if (robotSessions.has(robotId)) {
-                const robotConnection = robotSessions.get(robotId).robot;
-                if (robotConnection && robotConnection.readyState === WebSocket.OPEN) {
-                    robotConnection.send(`command:${command}`);
-                    console.log(`Comando enviado a robot ${robotId}: ${command}`);
-                } else {
-                    ws.send(`error:Robot ${robotId} no está conectado`);
+                    ws.send(JSON.stringify({ error: 'Robot no encontrado', ID: data.ID }));
                 }
             } else {
-                ws.send(`error:Robot ${robotId} no registrado`);
+                ws.send(JSON.stringify({ error: 'Mensaje no válido' }));
             }
+        } catch (err) {
+            console.error('Error al procesar mensaje:', err.message);
+            ws.send(JSON.stringify({ error: 'Formato inválido' }));
         }
     });
 
     ws.on('close', () => {
-        if (clientType === 'robot' && robotId) {
-            robotSessions.delete(robotId);
-            console.log(`Robot ${robotId} desconectado`);
-        } else if (clientType === 'web' && robotId) {
-            const session = robotSessions.get(robotId);
-            if (session) {
-                session.web = null;
-                console.log(`Página web desvinculada de robot ${robotId}`);
+        // Eliminar sesiones desconectadas
+        for (const id in sessions) {
+            if (sessions[id] === ws) {
+                console.log(`Robot desconectado: ${id}`);
+                delete sessions[id];
+                break;
             }
         }
     });
 });
+
+// Keep-alive para mantener conexiones
+setInterval(() => {
+    wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({ status: 'ping' }));
+        }
+    });
+}, 30000); // Cada 30 segundos
