@@ -6,10 +6,10 @@ const char *ssid = "Casa Bello";// Cambia por el nombre de tu red
 const char *password = "N66k8nbe";// Cambia por la contraseña de tu red
 
 // Wifi Trabajo
- //const char* ssid = "Grupo EPM";
- //const char* password = "Soporte632";
+//const char* ssid = "Grupo EPM";
+//const char* password = "Soporte632";
 
-// IP de Casa
+// IP del Servidor 
 const char *serverIp = "mk-bot-online.onrender.com"; // Cambia por la IP del servidor
 
 const int serverPort = 443;
@@ -23,6 +23,10 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
     {
     case WStype_DISCONNECTED:
         Serial.println("Desconectado del servidor");
+        digitalWrite(LED_BUILTIN, HIGH);
+        delay(500);
+        digitalWrite(LED_BUILTIN, LOW);
+        delay(500);
         break;
     case WStype_CONNECTED:
         Serial.println("Conectado al servidor WebSocket");
@@ -93,6 +97,9 @@ void setup()
     {
         delay(1000);
         Serial.println("Conectando a WiFi...");
+        digitalWrite(LED_BUILTIN, LOW);
+        delay(500);
+        digitalWrite(LED_BUILTIN, HIGH);
     }
     Serial.println("Conectado a WiFi");
 
