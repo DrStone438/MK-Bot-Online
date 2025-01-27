@@ -1,5 +1,6 @@
 #include <ESP8266WiFi.h>
 #include <WebSocketsClient.h>
+#include <ArduinoJson.h>
 #include <arduino.h>
 
 // Configuración WiFi
@@ -38,13 +39,25 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
         break;
     }
     case WStype_TEXT: {
-        Serial.println("Mensaje recibido desde WebSocket");
-        String message = String((char*)payload);
-        Serial.println("Mensaje: " + message);
+    Serial.println("Mensaje recibido desde WebSocket");
+    String message = String((char*)payload);
+    Serial.println("Mensaje: " + message);
 
-        // Analizar mensaje JSON (parsing simple)
-        if (message.indexOf(String("\"ID\":\"") + robotID + "\"") != -1) {
-            if (message.indexOf("adelante") != -1) {
+    // Analizar mensaje JSON
+    DynamicJsonDocument doc(256);
+    DeserializationError error = deserializeJson(doc, message);
+
+    if (error) {
+        Serial.println("Error al analizar el mensaje JSON");
+        return;
+    }
+
+    const char* id = doc["ID"];
+    const char* command = doc["command"];
+
+    if (id && String(id) == robotID) {
+        if (command) {
+            if (strcmp(command, "adelante") == 0) {
                 Serial.println("Mover adelante");
                 analogWrite(ENA, 100);
                 analogWrite(ENB, 100);
@@ -52,7 +65,7 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
                 digitalWrite(IN2, LOW);
                 digitalWrite(IN3, HIGH);
                 digitalWrite(IN4, LOW);
-            } else if (message.indexOf("atras") != -1) {
+            } else if (strcmp(command, "atras") == 0) {
                 Serial.println("Mover atrás");
                 analogWrite(ENA, 100);
                 analogWrite(ENB, 100);
@@ -60,7 +73,7 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
                 digitalWrite(IN2, HIGH);
                 digitalWrite(IN3, LOW);
                 digitalWrite(IN4, HIGH);
-            } else if (message.indexOf("izquierda") != -1) {
+            } else if (strcmp(command, "izquierda") == 0) {
                 Serial.println("Girar izquierda");
                 analogWrite(ENA, 100);
                 analogWrite(ENB, 100);
@@ -68,7 +81,7 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
                 digitalWrite(IN2, HIGH);
                 digitalWrite(IN3, HIGH);
                 digitalWrite(IN4, LOW);
-            } else if (message.indexOf("derecha") != -1) {
+            } else if (strcmp(command, "derecha") == 0) {
                 Serial.println("Girar derecha");
                 analogWrite(ENA, 100);
                 analogWrite(ENB, 100);
@@ -76,7 +89,7 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
                 digitalWrite(IN2, LOW);
                 digitalWrite(IN3, LOW);
                 digitalWrite(IN4, HIGH);
-            } else if (message.indexOf("stop") != -1) {
+            } else if (strcmp(command, "stop") == 0) {
                 Serial.println("Detener");
                 digitalWrite(IN1, LOW);
                 digitalWrite(IN2, LOW);
@@ -85,11 +98,13 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
             } else {
                 Serial.println("Comando no reconocido.");
             }
-        } else {
-            Serial.println("Mensaje no dirigido a este robot.");
         }
-        break;
+    } else {
+        Serial.println("Mensaje no dirigido a este robot.");
     }
+    break;
+}
+
     }
 }
 

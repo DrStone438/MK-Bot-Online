@@ -129,21 +129,23 @@ socket.onmessage = (event) => {
 };
 
 function registerRobot() {
-  if (socket.readyState === WebSocket.OPEN) {
-    const message = { clase: "web", ID: currentRobot };
-    socket.send(JSON.stringify(message));
-  } else {
-    console.error("WebSocket no está conectado");
-  }
+    if (socket.readyState === WebSocket.OPEN) {
+        const message = { clase: "web", ID: currentRobot };
+        socket.send(JSON.stringify(message));
+        console.log(`Registrado para controlar: ${currentRobot}`);
+    } else {
+        console.error("WebSocket no está conectado");
+    }
 }
 
 function sendCommand(command) {
-  if (socket.readyState === WebSocket.OPEN) {
-    const message = { ID: currentRobot, command };
-    socket.send(JSON.stringify(message));
-  } else {
-    console.error("WebSocket no está conectado");
-  }
+    if (socket.readyState === WebSocket.OPEN) {
+        const message = { ID: currentRobot, command };
+        socket.send(JSON.stringify(message));
+        console.log(`Enviando comando a ${currentRobot}: ${command}`);
+    } else {
+        console.error("WebSocket no está conectado");
+    }
 }
 
 function changeRobot() {
