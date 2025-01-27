@@ -2,12 +2,12 @@
 #include <WebSocketsClient.h>
 #include <arduino.h>
 
-const char *ssid = "Casa Bello";// Cambia por el nombre de tu red
-const char *password = "N66k8nbe";// Cambia por la contraseña de tu red
+//const char *ssid = "Casa Bello";// Cambia por el nombre de tu red
+//const char *password = "N66k8nbe";// Cambia por la contraseña de tu red
 
 // Wifi Trabajo
-//const char* ssid = "Grupo EPM";
-//const char* password = "Soporte632";
+const char* ssid = "ZTE-2.4G";
+const char* password = "math9793";
 
 // IP del Servidor 
 const char *serverIp = "mk-bot-online.onrender.com"; // Cambia por la IP del servidor
