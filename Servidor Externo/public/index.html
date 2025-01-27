@@ -111,6 +111,7 @@
 
       socket.onopen = () => {
         console.log("Conectado al servidor WebSocket");
+        socket.send("register:web:robot1");//Aqui se registra el cliente se puede cambiar el robot1 por una variable
       };
 
       socket.onmessage = (event) => {
@@ -130,7 +131,7 @@
       function sendCommand(command) {
         if (socket.readyState === WebSocket.OPEN) {
           console.log(`Enviando comando: ${command}`);
-          socket.send(command);
+          socket.send(`command:${command}`);
         } else {
           console.error("WebSocket no está conectado");
         }

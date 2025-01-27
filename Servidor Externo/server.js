@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;//ingrese el puerto que quiere usar
 app.use(cors());
 app.use(express.static('public')); // Carpeta para la página web
 
-const os = require('os'); // Importar módulo para obtener la IP
+const os = require('os');
 
 // Obtener la dirección IP local del servidor
 const getLocalIP = () => {
@@ -32,49 +32,67 @@ const server = app.listen(PORT, () => {
 // Servidor WebSocket
 const wss = new WebSocket.Server({ server });
 
+// Mapa para asociar robots y conexiones
+const robotSessions = new Map();
+
 wss.on('connection', (ws) => {
     console.log('Cliente conectado');
-    ws.send('prueba directa'); // Envía un mensaje de prueba
+
+    let clientType = null; // Tipo del cliente: "robot" o "web"
+    let robotId = null; // Identificador del robot asociado
 
     // Escuchar mensajes del cliente
     ws.on('message', (message) => {
-        console.log(`Comando recibido: ${message}`);
-        
-        // Reenviar el mensaje a todos los clientes conectados
-        wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-                console.log(`Reenviando Comando: ${message}`);
-                //client.send(message);
+        console.log(`Mensaje recibido: ${message}`);
+        const parts = message.split(':');
 
-                if (message == 'adelante'){
-                    client.send('adelante');
-                }
-                else if (message == 'atras'){
-                    client.send('atras');
-                }
-                else if (message == 'derecha'){
-                    client.send('derecha');
-                }
-                else if (message == 'izquierda'){
-                    client.send('izquierda');
-                }
-                else if (message == 'stop'){
-                    client.send('stop');
+        if (parts[0] === 'register') {
+            // Registro de clientes
+            clientType = parts[1]; // "robot" o "web"
+            robotId = parts[2];
+
+            if (clientType === 'robot') {
+                // Registrar un robot
+                robotSessions.set(robotId, { robot: ws, web: null });
+                console.log(`Robot ${robotId} registrado`);
+                ws.send(`registered:${robotId}`);
+            } else if (clientType === 'web') {
+                // Vincular página web al robot
+                if (robotSessions.has(robotId)) {
+                    robotSessions.get(robotId).web = ws;
+                    console.log(`Página web vinculada a robot ${robotId}`);
+                    ws.send(`linked:${robotId}`);
+                } else {
+                    ws.send(`error:Robot ${robotId} no encontrado`);
                 }
             }
-        });
+        } else if (parts[0] === 'command' && clientType === 'web') {
+            // Comando desde la página web
+            const command = parts[1];
+            if (robotSessions.has(robotId)) {
+                const robotConnection = robotSessions.get(robotId).robot;
+                if (robotConnection && robotConnection.readyState === WebSocket.OPEN) {
+                    robotConnection.send(`command:${command}`);
+                    console.log(`Comando enviado a robot ${robotId}: ${command}`);
+                } else {
+                    ws.send(`error:Robot ${robotId} no está conectado`);
+                }
+            } else {
+                ws.send(`error:Robot ${robotId} no registrado`);
+            }
+        }
     });
 
     ws.on('close', () => {
-        console.log('Cliente desconectado');
-    });
-});
-
-// Keep-alive para mantener conexiones
-setInterval(() => {
-    wss.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-            client.send('Sigue conectado');
+        if (clientType === 'robot' && robotId) {
+            robotSessions.delete(robotId);
+            console.log(`Robot ${robotId} desconectado`);
+        } else if (clientType === 'web' && robotId) {
+            const session = robotSessions.get(robotId);
+            if (session) {
+                session.web = null;
+                console.log(`Página web desvinculada de robot ${robotId}`);
+            }
         }
     });
-}, 30000); // Cada 30 segundos
+});
