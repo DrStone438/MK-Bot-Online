@@ -15,6 +15,16 @@ const char *serverIp = "mk-bot-online.onrender.com"; // Cambia por la IP del ser
 const int serverPort = 443;
 WebSocketsClient webSocket;
 
+// Motor A - Derecho
+int ENA = D6;  // ENA conectado al pin digital 10
+int IN1 = D1;   // IN1 conectado al pin digital 9
+int IN2 = D2;   // IN2 conectado al pin digital 8
+
+// Motor B - Izquierdo
+int IN3 = D3;   // IN3 conectado al pin digital 7
+int IN4 = D4;   // IN4 conectado al pin digital 6
+int ENB = D5;   // ENB conectado al pin digital 5
+
 
 
 void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
@@ -43,41 +53,62 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
         if (command.equals("adelante"))
         {
             // Lógica para mover adelante
-            Serial.println("Comando: adelante detectado");
-            digitalWrite(D1, HIGH);
             Serial.println("adelante");
             webSocket.sendTXT("Comando ejecutado: adelante");// manda un mensaje al servidor de que se ejecuto el comando
+            analogWrite(ENA, 100);
+            analogWrite(ENB, 100);
+            digitalWrite(IN1, HIGH);
+            digitalWrite(IN2, LOW);
+            digitalWrite(IN3, HIGH);
+            digitalWrite(IN4, LOW);
         }
         else if (command.equals("atras"))
         {
             // Lógica para mover atrás
             Serial.println("atras");
-            digitalWrite(D2,HIGH);
+            analogWrite(ENA, 100);
+            analogWrite(ENB, 100);
+            digitalWrite(IN1, LOW);
+            digitalWrite(IN2, HIGH);
+            digitalWrite(IN3, LOW);
+            digitalWrite(IN4, HIGH);
+
         }
         else if (command.equals("izquierda"))
         {
             // Lógica para girar izquierda
             Serial.println("izquierda");
-            digitalWrite(D3,HIGH);
+            analogWrite(ENA, 100);
+            analogWrite(ENB, 100);
+            digitalWrite(IN1, LOW);
+            digitalWrite(IN2, HIGH);
+            digitalWrite(IN3, HIGH);
+            digitalWrite(IN4, LOW);
         }
         else if (command.equals("derecha"))
         {
             // Lógica para girar derecha
             Serial.println("derecha");
-            digitalWrite(D4,HIGH);
+            analogWrite(ENA, 100);
+            analogWrite(ENB, 100);
+            digitalWrite(IN1, HIGH);
+            digitalWrite(IN2, LOW);
+            digitalWrite(IN3, LOW);
+            digitalWrite(IN4, HIGH);
         }
         else if (command.equals("stop"))
         {
             // Lógica para detener
-            digitalWrite(D1, LOW);
-            digitalWrite(D2, LOW);
-            digitalWrite(D3, LOW);
-            digitalWrite(D4, LOW);
+            digitalWrite(IN1, LOW);
+            digitalWrite(IN2, LOW);
+            digitalWrite(IN3, LOW);
+            digitalWrite(IN4, LOW);
             Serial.println("stop");
         }
         else
         {
             Serial.println("Comando no reconocido: " + command);
+            
         }
         break;
     }
@@ -87,10 +118,10 @@ void setup()
 {
     Serial.begin(115200);
     pinMode(LED_BUILTIN, OUTPUT);
-    pinMode(D2, OUTPUT);
-    pinMode(D3, OUTPUT);
-    pinMode(D4, OUTPUT);
-
+    pinMode(IN1, OUTPUT);
+    pinMode(IN2, OUTPUT);
+    pinMode(IN3, OUTPUT);
+    pinMode(IN4, OUTPUT);
     // Conexión WiFi
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED)
@@ -106,8 +137,7 @@ void setup()
     // Conectar al servidor WebSocket
     webSocket.beginSSL(serverIp, serverPort, "/");
     webSocket.onEvent(webSocketEvent);
-
-    pinMode(D1, OUTPUT);
+    
 }
 
 void loop()
