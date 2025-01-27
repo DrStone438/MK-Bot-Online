@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 3000;//Ingrese el puerto de el servidor
+const PORT = process.env.PORT || 3000; // Puerto del servidor
 
 // Configurar Express
 app.use(cors());
@@ -40,31 +40,44 @@ wss.on('connection', (ws) => {
 
     // Escuchar mensajes del cliente
     ws.on('message', (message) => {
-        if (data.clase === 'web' && data.ID) {
-            const robotWs = sessions[data.ID];
-            if (robotWs && robotWs.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ status: 'conectado', ID: data.ID }));
-                
-                // Redirigir comandos del cliente web al ESP
-                ws.on('message', (command) => {
-                    try {
-                        const parsedCommand = JSON.parse(command); // Asegúrate de analizar como JSON
-                        if (parsedCommand.ID === data.ID && parsedCommand.command) {
-                            console.log(`Comando para ${data.ID}: ${parsedCommand.command}`);
-                            robotWs.send(JSON.stringify(parsedCommand)); // Enviar al ESP
-                        } else {
-                            ws.send(JSON.stringify({ error: 'Formato de comando inválido' }));
+        try {
+            const data = JSON.parse(message); // Convierte el mensaje a un objeto JSON
+
+            if (data.clase === 'robot' && data.ID) {
+                // Registrar el ESP con su ID
+                sessions[data.ID] = ws;
+                console.log(`Robot registrado: ${data.ID}`);
+                ws.send(JSON.stringify({ status: 'registrado', ID: data.ID }));
+            } else if (data.clase === 'web' && data.ID) {
+                // Conexión desde una página web
+                const robotWs = sessions[data.ID];
+                if (robotWs && robotWs.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({ status: 'conectado', ID: data.ID }));
+
+                    // Redirigir comandos del cliente web al ESP
+                    ws.on('message', (commandMessage) => {
+                        try {
+                            const commandData = JSON.parse(commandMessage);
+                            if (commandData.command) {
+                                console.log(`Comando para ${data.ID}: ${commandData.command}`);
+                                robotWs.send(JSON.stringify({ command: commandData.command }));
+                            } else {
+                                console.error('Comando no válido');
+                            }
+                        } catch (err) {
+                            console.error('Error al procesar el comando:', err.message);
                         }
-                    } catch (err) {
-                        console.error('Error al procesar comando:', err.message);
-                        ws.send(JSON.stringify({ error: 'Formato inválido' }));
-                    }
-                });
+                    });
+                } else {
+                    ws.send(JSON.stringify({ error: 'Robot no encontrado', ID: data.ID }));
+                }
             } else {
-                ws.send(JSON.stringify({ error: 'Robot no encontrado', ID: data.ID }));
+                ws.send(JSON.stringify({ error: 'Mensaje no válido' }));
             }
+        } catch (err) {
+            console.error('Error al procesar mensaje:', err.message);
+            ws.send(JSON.stringify({ error: 'Formato inválido' }));
         }
-        
     });
 
     ws.on('close', () => {
