@@ -24,7 +24,7 @@ const int IN4 = D4;  // IN4 conectado al pin digital 6
 const int ENB = D5;  // ENB conectado al pin digital 5
 
 // Identificador del robot
-const char* robotID = "robot1";
+const char* robotID = "robot2";
 
 void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
     switch (type) {
@@ -52,65 +52,72 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
         return;
     }
 
-    const char* id = doc["ID"];
-    const char* command = doc["command"];
+    // Obtener el comando
+            const char* command = doc["command"];
+            if (command) {
+                // Separar el comando en partes si incluye ':'
+                String commandStr = String(command);
+                int separatorIndex = commandStr.indexOf(':');
 
-    if (id && String(id) == robotID) {
-        if (command) {
-            if (strcmp(command, "adelante") == 0) {
-                Serial.println("Mover adelante");
-                analogWrite(ENA, 100);
-                analogWrite(ENB, 100);
-                digitalWrite(IN1, HIGH);
-                digitalWrite(IN2, LOW);
-                digitalWrite(IN3, HIGH);
-                digitalWrite(IN4, LOW);
-            } else if (strcmp(command, "atras") == 0) {
-                Serial.println("Mover atrás");
-                analogWrite(ENA, 100);
-                analogWrite(ENB, 100);
-                digitalWrite(IN1, LOW);
-                digitalWrite(IN2, HIGH);
-                digitalWrite(IN3, LOW);
-                digitalWrite(IN4, HIGH);
-            } else if (strcmp(command, "izquierda") == 0) {
-                Serial.println("Girar izquierda");
-                analogWrite(ENA, 100);
-                analogWrite(ENB, 100);
-                digitalWrite(IN1, LOW);
-                digitalWrite(IN2, HIGH);
-                digitalWrite(IN3, HIGH);
-                digitalWrite(IN4, LOW);
-            } else if (strcmp(command, "derecha") == 0) {
-                Serial.println("Girar derecha");
-                analogWrite(ENA, 100);
-                analogWrite(ENB, 100);
-                digitalWrite(IN1, HIGH);
-                digitalWrite(IN2, LOW);
-                digitalWrite(IN3, LOW);
-                digitalWrite(IN4, HIGH);
-            } else if (strcmp(command, "stop") == 0) {
-                Serial.println("Detener");
-                digitalWrite(IN1, LOW);
-                digitalWrite(IN2, LOW);
-                digitalWrite(IN3, LOW);
-                digitalWrite(IN4, LOW);
-            } else {
-                Serial.println("Comando no reconocido.");
+                String mainCommand = commandStr;
+                String subCommand = "";
+
+                if (separatorIndex != -1) {
+                    mainCommand = commandStr.substring(0, separatorIndex);
+                    subCommand = commandStr.substring(separatorIndex + 1);
+                }
+
+                // Procesar el comando principal
+                if (mainCommand == "adelante") {
+                    Serial.println("Mover adelante");
+                    digitalWrite(IN1, HIGH);
+                    digitalWrite(IN2, LOW);
+                    digitalWrite(IN3, HIGH);
+                    digitalWrite(IN4, LOW);
+                } else if (mainCommand == "atras") {
+                    Serial.println("Mover atrás");
+                    digitalWrite(IN1, LOW);
+                    digitalWrite(IN2, HIGH);
+                    digitalWrite(IN3, LOW);
+                    digitalWrite(IN4, HIGH);
+                } else if (mainCommand == "izquierda") {
+                    Serial.println("Girar izquierda");
+                    digitalWrite(IN1, LOW);
+                    digitalWrite(IN2, HIGH);
+                    digitalWrite(IN3, HIGH);
+                    digitalWrite(IN4, LOW);
+                } else if (mainCommand == "derecha") {
+                    Serial.println("Girar derecha");
+                    digitalWrite(IN1, HIGH);
+                    digitalWrite(IN2, LOW);
+                    digitalWrite(IN3, LOW);
+                    digitalWrite(IN4, HIGH);
+                } else if (mainCommand == "stop") {
+                    Serial.println("Detener");
+                    digitalWrite(IN1, LOW);
+                    digitalWrite(IN2, LOW);
+                    digitalWrite(IN3, LOW);
+                    digitalWrite(IN4, LOW);
+                } else {
+                    Serial.println("Comando principal no reconocido: " + mainCommand);
+                }
+
+                // Procesar el subcomando si existe
+                if (subCommand.length() > 0) {
+                    Serial.println("Subcomando recibido: " + subCommand);
+                    // Aquí puedes agregar lógica adicional para manejar el subcomando
+                }
             }
+            break;
         }
-    } else {
-        Serial.println("Mensaje no dirigido a este robot.");
-    }
-    break;
-}
 
     }
 }
 
 void setup() {
     Serial.begin(115200);
-
+    pinMode(ENA, OUTPUT);
+    pinMode(ENB, OUTPUT);
     pinMode(IN1, OUTPUT);
     pinMode(IN2, OUTPUT);
     pinMode(IN3, OUTPUT);
