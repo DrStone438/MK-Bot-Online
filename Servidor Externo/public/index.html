@@ -146,7 +146,12 @@
       };
 
       socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
         console.log("Mensaje recibido:", event.data);
+
+        if (data.error === "Robot no encontrado") {
+          showToast();
+        }
       };
 
       function registerRobot() {
