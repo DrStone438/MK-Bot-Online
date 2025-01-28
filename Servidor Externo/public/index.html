@@ -149,8 +149,9 @@
         const data = JSON.parse(event.data);
         console.log("Mensaje recibido:", event.data);
 
-        if (data.error === "Robot no encontrado") {
-          showToast();
+        // Verificar si hay un error y si el ID no es "robot0"
+        if (data.error === "Robot no encontrado" && data.ID !== "robot0") {
+          showToast(data.ID);
         }
       };
 
