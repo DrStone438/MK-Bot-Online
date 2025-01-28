@@ -24,7 +24,7 @@ const int IN4 = D4;  // IN4 conectado al pin digital 6
 const int ENB = D5;  // ENB conectado al pin digital 5
 
 // Identificador del robot
-const char* robotID = "robot2";
+const char* robotID = "robot1";
 
 void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
     switch (type) {

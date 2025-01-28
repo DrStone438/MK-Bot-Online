@@ -30,17 +30,6 @@
   </head>
 
   <body class="bg-success">
-    <div class="container mt-4">
-      <div class="mb-3">
-        <label for="robotSelector" class="form-label text-white">Selecciona el robot a controlar:</label>
-        <select class="form-select" id="robotSelector" onchange="changeRobot()">
-          <option value="robot1" selected>Robot 1</option>
-          <option value="robot2">Robot 2</option>
-          <option value="robot3">Robot 3</option>
-        </select>
-      </div>
-    </div>
-
     <div class="d-pad mt-5">
       <div class="empty"></div>
 
@@ -89,8 +78,28 @@
 
       <div class="empty"></div>
     </div>
-      <!--Esta es la barra que dice Controla tu MK-BOT-->
+
+    <!--Esta es la barra que dice Controla tu MK-BOT-->
     <div class="container-fluid fixed-bottom">
+      <div class="container mt-4">
+        <div class="mb-3">
+          <label for="robotSelector" class="form-label text-white"
+            >Selecciona el robot a controlar:</label
+          >
+          <select 
+            class="form-select"
+            id="robotSelector"
+            onchange="changeRobot()"
+          >
+            <!--Si quiere agregar mas robots a futuro copie la linea y cambie de nombre-->
+            <option value="robot0" selected>Seleccione su robot</option>
+            <option value="robot1">Robot 1</option>
+            <option value="robot2">Robot 2</option>
+            <option value="robot3">Robot 3</option>
+          </select>
+        </div>
+      </div>
+
       <div class="container-fluid bg-dark">
         <div class="row">
           <div class="col-12">
@@ -98,7 +107,7 @@
           </div>
         </div>
       </div>
-      
+
       <!--Esta es la barra de navegacion con el logo-->
       <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
         <div class="container-fluid">
@@ -117,43 +126,42 @@
 
     <script>
       const socket = new WebSocket("wss://mk-bot-online.onrender.com");
-let currentRobot = "robot1";
+      let currentRobot = "robot1";
 
-socket.onopen = () => {
-  console.log("Conectado al servidor WebSocket");
-  registerRobot();
-};
+      socket.onopen = () => {
+        console.log("Conectado al servidor WebSocket");
+        registerRobot();
+      };
 
-socket.onmessage = (event) => {
-  console.log("Mensaje recibido:", event.data);
-};
+      socket.onmessage = (event) => {
+        console.log("Mensaje recibido:", event.data);
+      };
 
-function registerRobot() {
-    if (socket.readyState === WebSocket.OPEN) {
-        const message = { clase: "web", ID: currentRobot };
-        socket.send(JSON.stringify(message));
-        console.log(`Registrado para controlar: ${currentRobot}`);
-    } else {
-        console.error("WebSocket no está conectado");
-    }
-}
+      function registerRobot() {
+        if (socket.readyState === WebSocket.OPEN) {
+          const message = { clase: "web", ID: currentRobot };
+          socket.send(JSON.stringify(message));
+          console.log(`Registrado para controlar: ${currentRobot}`);
+        } else {
+          console.error("WebSocket no está conectado");
+        }
+      }
 
-function sendCommand(command) {
-    if (socket.readyState === WebSocket.OPEN) {
-        const message = { ID: currentRobot, command };
-        socket.send(JSON.stringify(message));
-        console.log(`Enviando comando a ${currentRobot}: ${command}`);
-    } else {
-        console.error("WebSocket no está conectado");
-    }
-}
+      function sendCommand(command) {
+        if (socket.readyState === WebSocket.OPEN) {
+          const message = { ID: currentRobot, command };
+          socket.send(JSON.stringify(message));
+          console.log(`Enviando comando a ${currentRobot}: ${command}`);
+        } else {
+          console.error("WebSocket no está conectado");
+        }
+      }
 
-function changeRobot() {
-  const selector = document.getElementById("robotSelector");
-  currentRobot = selector.value;
-  registerRobot();
-}
-
+      function changeRobot() {
+        const selector = document.getElementById("robotSelector");
+        currentRobot = selector.value;
+        registerRobot();
+      }
     </script>
   </body>
 </html>
