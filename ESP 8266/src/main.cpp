@@ -4,8 +4,8 @@
 #include <arduino.h>
 
 // Configuración WiFi
-const char* ssid = "Grupo EPM";
-const char* password = "Soporte632";
+const char* ssid = "Casa Bello";
+const char* password = "N66k8nbe";
 
 // IP del Servidor
 const char* serverIp = "mk-bot-online.onrender.com"; // Cambia por la IP del servidor
