@@ -1,4 +1,4 @@
-#include <ESP8266WiFi.h>
+#include <WiFi.h>
 #include <WebSocketsClient.h>
 #include <ArduinoJson.h>
 #include <arduino.h>
@@ -14,14 +14,14 @@ const int serverPort = 443;
 WebSocketsClient webSocket;
 
 // Motor A - Derecho
-const int ENA = D6;  // ENA conectado al pin digital 10
-const int IN1 = D1;  // IN1 conectado al pin digital 9
-const int IN2 = D2;  // IN2 conectado al pin digital 8
+const int ENA = 5;  // ENA conectado al pin digital 10
+const int IN1 = 18;  // IN1 conectado al pin digital 9
+const int IN2 = 19;  // IN2 conectado al pin digital 8
 
 // Motor B - Izquierdo
-const int IN3 = D3;  // IN3 conectado al pin digital 7
-const int IN4 = D4;  // IN4 conectado al pin digital 6
-const int ENB = D5;  // ENB conectado al pin digital 5
+const int IN3 = 4;  // IN3 conectado al pin digital 7
+const int IN4 = 23;  // IN4 conectado al pin digital 6
+const int ENB = 22;  // ENB conectado al pin digital 5
 
 // Identificador del robot
 const char* robotID = "robot1";
