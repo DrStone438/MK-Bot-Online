@@ -4,21 +4,21 @@
 
 Este proyecto permite controlar un robot mediante una página web a través de WebSockets. Se compone de tres partes principales:
 
-1. ESP32: Se conecta a una red WiFi y recibe comandos desde un servidor WebSocket para controlar motores.
+1. **ESP32**: Se conecta a una red WiFi y recibe comandos desde un servidor WebSocket para controlar motores.
 
-2. Servidor WebSocket (Node.js): Gestiona la comunicación entre la página web y el ESP32.
+2. **Servidor WebSocket (Node.js)**: Gestiona la comunicación entre la página web y el ESP32.
 
-3. Página Web: Proporciona una interfaz de usuario para enviar comandos al robot.
+3. **Página Web**: Proporciona una interfaz de usuario para enviar comandos al robot.
 
 ## Tecnologías Utilizadas
 
-- ESP32 con Arduino
+- **ESP32** con Arduino
 
-- WiFi y WebSockets para la comunicación en tiempo real
+- **WiFi y WebSockets** para la comunicación en tiempo real
 
-- Node.js y Express para el servidor WebSocket
+- **Node.js y Express** para el servidor WebSocket
 
-- HTML, CSS y Bootstrap para la página web
+- **HTML, CSS y Bootstrap** para la página web
 
 ## Requisitos
 
