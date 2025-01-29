@@ -109,7 +109,7 @@ npm install express ws cors``
 
 Autores
 
-Joaquin Bello - Desarrollador
+Joaquin Ignacio Bello Bailoni - Desarrollador
 
 Licencia
 
