@@ -46,7 +46,7 @@ wss.on('connection', (ws) => {
 
                 if (data.clase === 'robot' && data.ID) {
                     // Registrar el ESP con su ID
-                    sessions[data.ID] = ws;
+                    sessions[data.ID] = { robot: ws };
                     console.log(`Robot registrado: ${data.ID}`);
                     ws.send(JSON.stringify({ status: 'registrado', ID: data.ID }));
                 } else if (data.clase === 'web' && data.ID) {

@@ -4,8 +4,8 @@
 #include <ArduinoJson.h>
 
 // Configuración WiFi
-const char* ssid = "Grupo EPM";
-const char* password = "Soporte632";
+const char* ssid = "Casa Bello";
+const char* password = "N66k8nbe";
 
 // Configuración WebSocket
 const char* serverIp = "mk-bot-online.onrender.com"; // Cambia por la IP del servidor
@@ -26,7 +26,7 @@ const char* robotID = "robot1";
 
 // Configuración de la cámara
 #define CAMERA_MODEL_AI_THINKER
-#include <camera_pins.h>
+#include "camera_pins.h"
 
 // Función para capturar y enviar imagen por WebSocket
 void captureAndSendFrame() {
@@ -49,6 +49,7 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
     case WStype_CONNECTED: {
         Serial.println("Conectado al servidor WebSocket");
         String registerMessage = String("{\"clase\":\"robot\",\"ID\":\"") + robotID + "\"}";
+        Serial.println("Enviando mensaje de registro: " + registerMessage);
         webSocket.sendTXT(registerMessage);
         break;
     }
@@ -142,7 +143,7 @@ void setup() {
     config.pin_sscb_scl = SIOC_GPIO_NUM;
     config.pin_pwdn = PWDN_GPIO_NUM;
     config.pin_reset = RESET_GPIO_NUM;
-    config.xclk_freq_hz = 20000000;
+    config.xclk_freq_hz = 10000000;
     config.pixel_format = PIXFORMAT_JPEG;
     config.frame_size = FRAMESIZE_QVGA;
     config.jpeg_quality = 12;

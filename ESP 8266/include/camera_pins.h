@@ -1,7 +1,7 @@
 #ifndef _CAMERA_PINS_H_
 #define _CAMERA_PINS_H_
 
-#define PWDN_GPIO_NUM     -1
+#define PWDN_GPIO_NUM     32
 #define RESET_GPIO_NUM    -1
 #define XCLK_GPIO_NUM      0
 #define SIOD_GPIO_NUM     26
