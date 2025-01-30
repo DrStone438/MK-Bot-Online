@@ -30,6 +30,10 @@
   </head>
 
   <body class="bg-success">
+
+    <img id="videoStream" width="640" height="480" />
+
+    <!--Este es el pad de control del robot-->
     <div class="d-pad mt-5">
       <div class="empty"></div>
 
@@ -140,19 +144,28 @@
       const socket = new WebSocket("wss://mk-bot-online.onrender.com");
       let currentRobot = "robot0";
 
+      socket.binaryType = "arraybuffer";
+
       socket.onopen = () => {
         console.log("Conectado al servidor WebSocket");
         registerRobot();
       };
 
       socket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        console.log("Mensaje recibido:", event.data);
+        try{
+          const data = JSON.parse(event.data);
+          console.log("Mensaje recibido:", event.data);
 
-        // Verificar si hay un error y si el ID no es "robot0"
-        if (data.error === "Robot no encontrado" && data.ID !== "robot0") {
-          showToast(data.ID);
-        }
+          // Verificar si hay un error y si el ID no es "robot0"
+          if (data.error === "Robot no encontrado" && data.ID !== "robot0") {
+            showToast(data.ID);
+          }
+        } catch (e) {
+          // Si falla el JSON, asumimos que es una imagen
+          var blob = new Blob([event.data], { type: "image/jpeg" });
+          var url = URL.createObjectURL(blob);
+          document.getElementById("videoStream").src = url;
+          }
       };
 
       function registerRobot() {
