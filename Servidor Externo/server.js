@@ -1,6 +1,7 @@
 const WebSocket = require('ws');
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,7 +22,24 @@ const sessions = {};
 wss.on('connection', (ws) => {
     console.log('Cliente conectado');
 
-    ws.on('message', (message) => {
+    ws.on('message', (message, isBinary) => {
+        if (isBinary) {
+            console.log("Recibida imagen binaria.");
+
+            // Guardar la imagen en un archivo
+            const filename = `public/frame_${Date.now()}.jpg`;
+            fs.writeFileSync(filename, message);
+            console.log(`Imagen guardada en ${filename}`);
+
+            // Reenviar la imagen a la página web asociada
+            for (const id in sessions) {
+                if (sessions[id].robot === ws && sessions[id].web) {
+                    sessions[id].web.send(message); // Enviar imagen a la web
+                }
+            }
+            return;
+        }
+
         try {
             const data = JSON.parse(message);
 
