@@ -19,8 +19,8 @@
         width: 500px;
         margin: auto;
       }
-      .d-pad button {
-        width: 150px;
+      .d-pad button {/*Aqui es donde se puede ajustar el tamaño de los botones */
+        width: 150px; 
         height: 150px;
       }
       .d-pad .empty {
@@ -30,59 +30,68 @@
   </head>
 
   <body class="bg-success">
-
-    <img id="videoStream" width="640" height="480" />
-
-    <!--Este es el pad de control del robot-->
-    <div class="d-pad mt-5">
-      <div class="empty"></div>
-
-      <button
-        type="button"
-        class="btn btn-primary"
-        id="up"
-        onmousedown="sendCommand('adelante')"
-        onmouseup="sendCommand('stop')"
-      >
-        ▲
-      </button>
-
-      <div class="empty"></div>
-      <button
-        type="button"
-        class="btn btn-primary"
-        id="left"
-        onmousedown="sendCommand('izquierda')"
-        onmouseup="sendCommand('stop')"
-      >
-        ◀
-      </button>
-
-      <div class="empty"></div>
-      <button
-        type="button"
-        class="btn btn-primary"
-        id="right"
-        onmousedown="sendCommand('derecha')"
-        onmouseup="sendCommand('stop')"
-      >
-        ▶
-      </button>
-
-      <div class="empty"></div>
-      <button
-        type="button"
-        class="btn btn-primary mb-5"
-        id="down"
-        onmousedown="sendCommand('atras')"
-        onmouseup="sendCommand('stop')"
-      >
-        ▼
-      </button>
-
-      <div class="empty"></div>
+    <div class="container mt-5">
+      <div class="row justify-content-center align-items-center">
+        <!-- Contenedor del video -->
+        <div class="col-md-6 text-center">
+          <img id="videoStream" width="640" height="480" class="img-fluid" />
+        </div>
+  
+        <!-- Contenedor del D-Pad -->
+        <div class="col-md-6 d-flex justify-content-center">
+          <div class="d-pad">
+            <div class="empty"></div>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="up"
+              onmousedown="sendCommand('adelante')"
+              onmouseup="sendCommand('stop')"
+            >
+              ▲
+            </button>
+            <div class="empty"></div>
+  
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="left"
+              onmousedown="sendCommand('izquierda')"
+              onmouseup="sendCommand('stop')"
+            >
+              ◀
+            </button>
+  
+            <div class="empty"></div>
+  
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="right"
+              onmousedown="sendCommand('derecha')"
+              onmouseup="sendCommand('stop')"
+            >
+              ▶
+            </button>
+  
+            <div class="empty"></div>
+  
+            <button
+              type="button"
+              class="btn btn-primary mb-5"
+              id="down"
+              onmousedown="sendCommand('atras')"
+              onmouseup="sendCommand('stop')"
+            >
+              ▼
+            </button>
+  
+            <div class="empty"></div>
+          </div>
+        </div>
+      </div>
     </div>
-
+  
     <!--Esta es la barra que dice Controla tu MK-BOT-->
     <div class="container-fluid fixed-bottom">
       <div class="container mt-4">
