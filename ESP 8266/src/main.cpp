@@ -8,7 +8,7 @@ const char* ssid = "Casa Bello";
 const char* password = "N66k8nbe";
 
 // Configuración WebSocket
-const char* serverIp = "mk-bot-online.onrender.com"; // Cambia por la IP del servidor
+const char* serverIp = "mk-bot-connect.onrender.com"; // Cambia por la IP del servidor
 const int serverPort = 443;
 
 WebSocketsClient webSocket;
