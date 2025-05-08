@@ -4,8 +4,8 @@
 #include <ArduinoJson.h>
 
 // Configuración WiFi
-const char* ssid = "Casa Bello";
-const char* password = "N66k8nbe";
+const char* ssid = "Nombre de wifi";
+const char* password = "Contraseña";
 
 // Configuración WebSocket
 const char* serverIp = "mk-bot-connect.onrender.com"; // Cambia por la IP del servidor
